@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react'; // 아이콘 라이브러리 (lucide-react)
+import { AnimatePresence, motion } from "framer-motion"; // 부드러운 애니메이션 라이브러리 (framer-motion)
 
 const App: React.FC = () => {
     const [password, setPassword] = useState('');
@@ -65,22 +66,31 @@ const App: React.FC = () => {
                         추가
                     </button>
                 </div>
-
-                {keywords.length > 0 && (
-                    <div className="mb-4">
-                        <p className="text-sm font-medium text-gray-700 mb-1">추가된 키워드:</p>
-                        <div className="flex flex-wrap gap-2">
-                            {keywords.map((kw, idx) => (
-                                <span
-                                    key={idx}
-                                    className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
-                                >
-                  {kw}
-                </span>
-                            ))}
+                <AnimatePresence>
+                    {keywords.length > 0 && (
+                        <div className="mb-4">
+                            <p className="text-sm font-medium text-gray-700 mb-1">추가된 키워드:</p>
+                            <div className="flex flex-wrap gap-2">
+                                {keywords.map((kw, idx) => (
+                                    <motion.div
+                                        key={kw}
+                                        onClick={() =>
+                                            setKeywords(keywords.filter((_, i) => i !== idx))
+                                        }
+                                        className="inline-flex items-center bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium px-3 py-1 rounded-full cursor-pointer transition-all group mr-2 mb-2"
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
+                                        <span>{kw}</span>
+                                        <span className="ml-2 text-blue-500 group-hover:text-blue-700 text-xs">✕</span>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </AnimatePresence>
 
                 <button
                     onClick={handleSubmit}
