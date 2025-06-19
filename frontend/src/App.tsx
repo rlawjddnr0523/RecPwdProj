@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react'; // 아이콘 라이브러리 (lucide-react)
 import * as motion from "motion/react-client"; // 부드러운 애니메이션 라이브러리 (motion)
 import { AnimatePresence } from "motion/react";
+import generateRandomString from "./assets/RequestPWD.ts";
+
 
 const App: React.FC = () => {
-    // const [password, setPassword] = useState('');
-    // const [showPassword, setShowPassword] = useState(false);
     const [keyword, setKeyword] = useState('');
     const [keywords, setKeywords] = useState<string[]>([]);
     const [recommendations, setRecommendations] = useState<string[]>([]);
@@ -24,17 +23,22 @@ const App: React.FC = () => {
         return value.replace(/[\u3131-\u318E\uAC00-\uD7A3\u1100-\u11FF\u3000-\u303F\u4E00-\u9FFF\u3040-\u30FF\uFF00-\uFFEF]/g, "");
     };
 
-    const handleSubmit = async () => {
-        if (!password) return;
+    const handleSubmit = async (
+        length:number,
+        includeUppercase:boolean,
+        includeSpecialChars:boolean,
+        keywords:string[]
+    ) => {
 
-        const res = await fetch('http://localhost:8000/api/recommend', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password, keywords }),
+        const random = generateRandomString({
+            length: length,
+            includeUppercase: includeUppercase,
+            includeSpecialChars: includeSpecialChars,
+            keywords: keywords,
+            excludeStrings: ['123', '1234', 'password', 'qwerty', 'abc', '1111', '0000'],
         });
 
-        const data = await res.json();
-        setRecommendations(data.recommendations);
+        setRecommendations([random]);
     };
 
     return (
@@ -45,31 +49,22 @@ const App: React.FC = () => {
                     비밀번호는 최소 10자리에서 최대 40자리까지 설정가능하고,<br/> 영문 키워드만 입력가능합니다!
                 </h4>
 
-                {/*<div className="relative mb-4">*/}
-                {/*    <input*/}
-                {/*        type={showPassword ? 'text' : 'password'}*/}
-                {/*        placeholder="비밀번호를 입력하세요"*/}
-                {/*        value={password}*/}
-                {/*        onChange={(e) => setPassword(e.target.value)}*/}
-                {/*        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-0 pr-10 z-10" // focus:ring-0로 파란색 하이라이트 제거*/}
-                {/*    />*/}
-                {/*    <button*/}
-                {/*        type="button"*/}
-                {/*        onClick={() => setShowPassword(!showPassword)}*/}
-                {/*        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none hover:outline-none active:outline-none !bg-transparent" // focus:outline-none으로 아이콘 버튼의 테두리 제거*/}
-                {/*    >*/}
-                {/*        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}*/}
-                {/*    </button>*/}
-                {/*</div>*/}
-
                 <div className="flex mb-4">
                     <input
                         type="text"
                         placeholder="키워드 입력"
                         value={keyword}
                         onChange={(e) => setKeyword(onlyEngKeyword(e.target.value))}
+                        onKeyUp={(e) => {
+                            if (e.code === 'Space' || e.code === 'Enter' ||e.key === ' ') {
+                                const trimmed = onlyEngKeyword(keyword).trim();
+                                if (trimmed) {
+                                    setKeywords([...keywords, trimmed]);
+                                    setKeyword(""); // 입력창 비우기
+                        }}}}
                         className="flex-grow px-4 py-2 border rounded-lg focus:outline-none focus:ring-0"
                     />
+
                     <button
                         onClick={addKeyword}
                         className="bg-blue-600 text-black dark:text-white px-4 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-0"
@@ -114,7 +109,7 @@ const App: React.FC = () => {
                     />
                     <label className={"text-xs"}>자리</label>
                     <input
-                        className="w-96"
+                        className="my-2 w-96 appearance-none outline-none h-4 rounded-2xl bg-gradient-to-r from-red-500 to-green-500 thumb"
                         type="range"
                         min="10" max="40" step="1"
                         value={pwdLength}
@@ -164,7 +159,7 @@ const App: React.FC = () => {
                 </div>
 
                 <button
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit(pwdLength, pwdUpperCase, pwdSpecLet, keywords)}
                     className="w-full bg-green-600 text-black dark:text-white py-2 rounded-lg hover:bg-green-700 transition"
                 >
                     추천 받기
@@ -173,7 +168,7 @@ const App: React.FC = () => {
                 {recommendations.length > 0 && (
                     <div className="mt-6">
                         <h2 className="text-lg font-semibold mb-2">추천 비밀번호:</h2>
-                        <ul className="list-disc pl-6 space-y-1 text-gray-700">
+                        <ul className="list-disc pl-6 space-y-1 text-gray-700 dark:text-gray-400">
                             {recommendations.map((rec, index) => (
                                 <li key={index}>{rec}</li>
                             ))}
