@@ -44,7 +44,7 @@ app.add_middleware(
 # 모델 로딩
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = LSTMClassifier(vocab_size=len(char2idx)+1).to(device)
-model.load_state_dict(torch.load("./Files/lstm_password_classifier_76941.pt", map_location=device))
+model.load_state_dict(torch.load("./lstm_password_classifier_76941.pt", map_location=device))
 model.eval()
 
 # 요청 모델
