@@ -1,7 +1,8 @@
 # 실행 순서
 1. `pip install -r requirements.txt` 를 실행하세요
 2. [rockyou.txt](https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt)
-를 다운로드 합니다. 그리고 프로젝트 경로에 저장합니다.
+를 다운로드 합니다. 그리고 프로젝트 경로에 저장합니다. 또는, [rockyou.txt.zip](rockyou.txt.zip)의 압축을 풀어서 저장합니다.
+
 3. Python 버전을 3.13으로 설정하고 `files2.ipynb`, `file3.ipynb`를 실행합니다.
 4. `main.py`에 `#모델 로딩` 부분에서 `lstm_password_classifier_76941.pt`의 경로로 경로를 변경합니다.
 5. 다음 명령어를 실행하여 FastAPI 프로젝트를 실행합니다.
