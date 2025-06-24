@@ -1,0 +1,9 @@
+/.idea
+
+/__pychache__
+
+/node_modules
+
+/*.zip
+
+.DS_Store
